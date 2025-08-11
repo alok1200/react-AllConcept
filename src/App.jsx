@@ -1,7 +1,7 @@
 import "./App.css";
 import Cart from "./component/Cart";
 
-function App(props) {
+function App() {
   let test = {
     name: "1test",
     age: "18",
