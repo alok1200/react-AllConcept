@@ -28,6 +28,7 @@ function App() {
         className="w-full max-w-md mx-auto shadow-md rounded-lg px-4 my-8 text-orange-600
       bg-gray-700"
       >
+        <h1 className="text-white text text-center my-3">password generator</h1>
         <div className="flex shadow rounded-lg overflow-hidden mb-4">
           <input
             type="text"
@@ -35,6 +36,22 @@ function App() {
             placeholder="Enter Password"
             className="outline-none w-full py-1 px-3"
           />
+          <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0">
+            copy
+          </button>
+        </div>
+
+        <div className=" flex text-sm gap-x-2">
+          <div className="flex text-sm gap-x-1">
+            <input
+              type="range"
+              min={6}
+              max={25}
+              value={length}
+              className="cursor-pointer"
+            />
+            <label>Length:{length}</label>
+          </div>
         </div>
       </div>
     </>
