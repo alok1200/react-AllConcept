@@ -1,56 +1,96 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import "./App.css";
 
 function App() {
-  const [senght, setLength] = useState(8);
-  const [numberAlloud, setNumberAlloud] = useState(false);
-  const [carAlloud, setCarAlloud] = useState(false);
+  const [length, setLength] = useState(8);
+  const [numberAllowed, setNumberAllowed] = useState(false);
+  const [charAllowed, setCharAllowed] = useState(false);
   const [password, setPassword] = useState("");
+
+  const passwordRef = useRef(null);
+
   const passwordGenerator = useCallback(() => {
     let pass = "";
-    let str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    let str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    if (numberAlloud) str += "0123456789";
-    if (carAlloud) str += "!@#$%^&*()_+-=[]{}|;':,./<>?";
+    if (numberAllowed) str += "0123456789";
+    if (charAllowed) str += "!@#$%^&*()_+-=[]{}|;':,./<>?";
 
-    for (let i = 0; i <= array.length; i++) {
-      let char = Math.floor(Math.random() * str.length + 1);
-
-      pass = str.charAt(char);
-
-      setPassword(pass);
+    for (let i = 0; i < length; i++) {
+      const charIndex = Math.floor(Math.random() * str.length);
+      pass += str.charAt(charIndex);
     }
-  }, [senght, numberAlloud, carAlloud, setPassword]);
+
+    setPassword(pass);
+  }, [length, numberAllowed, charAllowed]);
+
+  const copyPasswordToClipboard = useCallback(() => {
+    passwordRef.current?.select();
+    window.navigator.clipboard.writeText(password);
+  }, [password]);
+
+  // Generate password on first render + whenever options change
+  useEffect(() => {
+    passwordGenerator();
+  }, [length, numberAllowed, charAllowed, passwordGenerator]);
 
   return (
     <>
-      <div
-        className="w-full max-w-md mx-auto shadow-md rounded-lg px-4 my-8 text-orange-600
-      bg-gray-700"
-      >
-        <h1 className="text-white text text-center my-3">password generator</h1>
+      <div className="w-full max-w-md mx-auto shadow-md rounded-lg px-4 my-8 text-orange-600 bg-gray-700">
+        <h1 className="text-white text-center my-3 text-lg font-bold">
+          Password Generator
+        </h1>
+
+        {/* Input + Copy */}
         <div className="flex shadow rounded-lg overflow-hidden mb-4">
           <input
             type="text"
             value={password}
-            placeholder="Enter Password"
+            ref={passwordRef}
+            readOnly
             className="outline-none w-full py-1 px-3"
           />
-          <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0">
-            copy
+          <button
+            onClick={copyPasswordToClipboard}
+            className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0"
+          >
+            Copy
           </button>
         </div>
 
-        <div className=" flex text-sm gap-x-2">
-          <div className="flex text-sm gap-x-1">
+        {/* Controls */}
+        <div className="flex flex-col gap-y-2 text-sm">
+          {/* Length Slider */}
+          <div className="flex items-center gap-x-2">
             <input
               type="range"
               min={6}
               max={25}
               value={length}
+              onChange={(e) => setLength(Number(e.target.value))}
               className="cursor-pointer"
             />
-            <label>Length:{length}</label>
+            <label className="text-white">Length: {length}</label>
+          </div>
+
+          {/* Number Checkbox */}
+          <div className="flex items-center gap-x-2">
+            <input
+              type="checkbox"
+              checked={numberAllowed}
+              onChange={() => setNumberAllowed((prev) => !prev)}
+            />
+            <label className="text-white">Include Numbers</label>
+          </div>
+
+          {/* Special Char Checkbox */}
+          <div className="flex items-center gap-x-2">
+            <input
+              type="checkbox"
+              checked={charAllowed}
+              onChange={() => setCharAllowed((prev) => !prev)}
+            />
+            <label className="text-white">Include Special Characters</label>
           </div>
         </div>
       </div>
